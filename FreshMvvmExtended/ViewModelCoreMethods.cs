@@ -8,12 +8,12 @@ namespace FreshMvvmExtended
     public class ViewModelCoreMethods : IViewModelCoreMethods
     {
         Page _currentPage;
-        FreshBaseViewModel _currentPageModel;
+        FreshBaseViewModel _currentViewModel;
 
         public ViewModelCoreMethods(Page currentPage, FreshBaseViewModel pageModel)
         {
             _currentPage = currentPage;
-            _currentPageModel = pageModel;
+            _currentViewModel = pageModel;
         }
 
         public async Task DisplayAlert(string title, string message, string cancel)
@@ -36,46 +36,46 @@ namespace FreshMvvmExtended
             return false;
         }
 
-        public async Task PushPageModel<T>(object data, bool modal = false, bool animate = true) where T : FreshBaseViewModel
+        public async Task PushViewModel<T>(object data, bool modal = false, bool animate = true) where T : FreshBaseViewModel
         {
             T pageModel = FreshIOC.Container.Resolve<T>();
 
-            await PushPageModel(pageModel, data, modal, animate);
+            await PushViewModel(pageModel, data, modal, animate);
         }
 
-        public async Task PushPageModel<T, TPage>(object data, bool modal = false, bool animate = true) where T : FreshBaseViewModel where TPage : Page
+        public async Task PushViewModel<T, TPage>(object data, bool modal = false, bool animate = true) where T : FreshBaseViewModel where TPage : Page
         {
             T pageModel = FreshIOC.Container.Resolve<T>();
             TPage page = FreshIOC.Container.Resolve<TPage>();
-            FreshViewModelResolver.BindingPageModel(data, page, pageModel);
-            await PushPageModelWithPage(page, pageModel, data, modal, animate);
+            FreshViewModelResolver.BindingViewModel(data, page, pageModel);
+            await PushViewModelWithPage(page, pageModel, data, modal, animate);
         }
 
-        public Task PushPageModel(Type pageModelType, bool animate = true)
+        public Task PushViewModel(Type pageModelType, bool animate = true)
         {
-            return PushPageModel(pageModelType, null, animate);
+            return PushViewModel(pageModelType, null, animate);
         }
 
-        public Task PushPageModel(Type pageModelType, object data, bool modal = false, bool animate = true)
+        public Task PushViewModel(Type pageModelType, object data, bool modal = false, bool animate = true)
         {
             var pageModel = FreshIOC.Container.Resolve(pageModelType) as FreshBaseViewModel;
 
-            return PushPageModel(pageModel, data, modal, animate);
+            return PushViewModel(pageModel, data, modal, animate);
         }
 
-        async Task PushPageModel(FreshBaseViewModel pageModel, object data, bool modal = false, bool animate = true)
+        async Task PushViewModel(FreshBaseViewModel pageModel, object data, bool modal = false, bool animate = true)
         {
-            var page = FreshViewModelResolver.ResolvePageModel(data, pageModel);
-            await PushPageModelWithPage(page, pageModel, data, modal, animate);
+            var page = FreshViewModelResolver.ResolveViewModel(data, pageModel);
+            await PushViewModelWithPage(page, pageModel, data, modal, animate);
         }
 
-        async Task PushPageModelWithPage(Page page, FreshBaseViewModel pageModel, object data, bool modal = false, bool animate = true)
+        async Task PushViewModelWithPage(Page page, FreshBaseViewModel pageModel, object data, bool modal = false, bool animate = true)
         {
-            pageModel.PreviousPageModel = _currentPageModel; //This is the previous page model because it's push to a new one, and this is current
-            pageModel.CurrentNavigationServiceName = _currentPageModel.CurrentNavigationServiceName;
+            pageModel.PreviousViewModel = _currentViewModel; //This is the previous page model because it's push to a new one, and this is current
+            pageModel.CurrentNavigationServiceName = _currentViewModel.CurrentNavigationServiceName;
 
             if (string.IsNullOrWhiteSpace(pageModel.PreviousNavigationServiceName))
-                pageModel.PreviousNavigationServiceName = _currentPageModel.PreviousNavigationServiceName;
+                pageModel.PreviousNavigationServiceName = _currentViewModel.PreviousNavigationServiceName;
 
             if (page is FreshMasterDetailNavigationContainer)
             {
@@ -87,23 +87,23 @@ namespace FreshMvvmExtended
             }
             else
             {
-                IFreshNavigationService rootNavigation = FreshIOC.Container.Resolve<IFreshNavigationService>(_currentPageModel.CurrentNavigationServiceName);
+                IFreshNavigationService rootNavigation = FreshIOC.Container.Resolve<IFreshNavigationService>(_currentViewModel.CurrentNavigationServiceName);
 
                 await rootNavigation.PushPage(page, pageModel, modal, animate);
             }
         }
 
-        public async Task PopPageModel(bool modal = false, bool animate = true)
+        public async Task PopViewModel(bool modal = false, bool animate = true)
         {
-            string navServiceName = _currentPageModel.CurrentNavigationServiceName;
-            if (_currentPageModel.IsModalFirstChild)
+            string navServiceName = _currentViewModel.CurrentNavigationServiceName;
+            if (_currentViewModel.IsModalFirstChild)
             {
                 await PopModalNavigationService(animate);
             }
             else
             {
                 if (modal)
-                    this._currentPageModel.RaisePageWasPopped();
+                    this._currentViewModel.RaisePageWasPopped();
 
                 IFreshNavigationService rootNavigation = FreshIOC.Container.Resolve<IFreshNavigationService>(navServiceName);
                 await rootNavigation.PopPage(modal, animate);
@@ -112,38 +112,38 @@ namespace FreshMvvmExtended
 
         public async Task PopToRoot(bool animate)
         {
-            IFreshNavigationService rootNavigation = FreshIOC.Container.Resolve<IFreshNavigationService>(_currentPageModel.CurrentNavigationServiceName);
+            IFreshNavigationService rootNavigation = FreshIOC.Container.Resolve<IFreshNavigationService>(_currentViewModel.CurrentNavigationServiceName);
             await rootNavigation.PopToRoot(animate);
         }
 
-        public async Task PopPageModel(object data, bool modal = false, bool animate = true)
+        public async Task PopViewModel(object data, bool modal = false, bool animate = true)
         {
-            if (_currentPageModel != null && _currentPageModel.PreviousPageModel != null && data != null)
+            if (_currentViewModel != null && _currentViewModel.PreviousViewModel != null && data != null)
             {
-                _currentPageModel.PreviousPageModel.ReverseInit(data);
+                _currentViewModel.PreviousViewModel.ReverseInit(data);
             }
-            await PopPageModel(modal, animate);
+            await PopViewModel(modal, animate);
         }
 
-        public Task PushPageModel<T>(bool animate = true) where T : FreshBaseViewModel
+        public Task PushViewModel<T>(bool animate = true) where T : FreshBaseViewModel
         {
-            return PushPageModel<T>(null, false, animate);
+            return PushViewModel<T>(null, false, animate);
         }
 
-        public Task PushPageModel<T, TPage>(bool animate = true) where T : FreshBaseViewModel where TPage : Page
+        public Task PushViewModel<T, TPage>(bool animate = true) where T : FreshBaseViewModel where TPage : Page
         {
-            return PushPageModel<T, TPage>(null, animate);
+            return PushViewModel<T, TPage>(null, animate);
         }
 
-        public Task PushNewNavigationServiceModal(FreshTabbedNavigationContainer tabbedNavigationContainer, FreshBaseViewModel basePageModel = null, bool animate = true)
+        public Task PushNewNavigationServiceModal(FreshTabbedNavigationContainer tabbedNavigationContainer, FreshBaseViewModel baseViewModel = null, bool animate = true)
         {
             var models = tabbedNavigationContainer.TabbedPages.Select(o => o.GetModel()).ToList();
-            if (basePageModel != null)
-                models.Add(basePageModel);
+            if (baseViewModel != null)
+                models.Add(baseViewModel);
             return PushNewNavigationServiceModal(tabbedNavigationContainer, models.ToArray(), animate);
         }
 
-        public Task PushNewNavigationServiceModal(FreshMasterDetailNavigationContainer masterDetailContainer, FreshBaseViewModel basePageModel = null, bool animate = true)
+        public Task PushNewNavigationServiceModal(FreshMasterDetailNavigationContainer masterDetailContainer, FreshBaseViewModel baseViewModel = null, bool animate = true)
         {
             var models = masterDetailContainer.Pages.Select(o =>
                {
@@ -153,31 +153,31 @@ namespace FreshMvvmExtended
                        return o.Value.GetModel();
                }).ToList();
 
-            if (basePageModel != null)
-                models.Add(basePageModel);
+            if (baseViewModel != null)
+                models.Add(baseViewModel);
 
             return PushNewNavigationServiceModal(masterDetailContainer, models.ToArray(), animate);
         }
 
-        public Task PushNewNavigationServiceModal(IFreshNavigationService newNavigationService, FreshBaseViewModel basePageModels, bool animate = true)
+        public Task PushNewNavigationServiceModal(IFreshNavigationService newNavigationService, FreshBaseViewModel baseViewModels, bool animate = true)
         {
-            return PushNewNavigationServiceModal(newNavigationService, new FreshBaseViewModel[] { basePageModels }, animate);
+            return PushNewNavigationServiceModal(newNavigationService, new FreshBaseViewModel[] { baseViewModels }, animate);
         }
 
-        public async Task PushNewNavigationServiceModal(IFreshNavigationService newNavigationService, FreshBaseViewModel[] basePageModels, bool animate = true)
+        public async Task PushNewNavigationServiceModal(IFreshNavigationService newNavigationService, FreshBaseViewModel[] baseViewModels, bool animate = true)
         {
             var navPage = newNavigationService as Page;
             if (navPage == null)
                 throw new Exception("Navigation service is not Page");
 
-            foreach (var pageModel in basePageModels)
+            foreach (var pageModel in baseViewModels)
             {
                 pageModel.CurrentNavigationServiceName = newNavigationService.NavigationServiceName;
-                pageModel.PreviousNavigationServiceName = _currentPageModel.CurrentNavigationServiceName;
+                pageModel.PreviousNavigationServiceName = _currentViewModel.CurrentNavigationServiceName;
                 pageModel.IsModalFirstChild = true;
             }
 
-            IFreshNavigationService rootNavigation = FreshIOC.Container.Resolve<IFreshNavigationService>(_currentPageModel.CurrentNavigationServiceName);
+            IFreshNavigationService rootNavigation = FreshIOC.Container.Resolve<IFreshNavigationService>(_currentViewModel.CurrentNavigationServiceName);
             await rootNavigation.PushPage(navPage, null, true, animate);
         }
 
@@ -186,7 +186,7 @@ namespace FreshMvvmExtended
         /// </summary>
         /// <param name="navigationServiceName"></param>
         /// <param name="NotifyContainer">Call the Init for every page on the container</param>
-        public void SwitchOutRootNavigation(string navigationServiceName, bool NotifyContainer)
+        public void SwitchOutRootNavigation(string navigationServiceName, bool NotifyContainer = false)
         {
             IFreshNavigationService rootNavigation = FreshIOC.Container.Resolve<IFreshNavigationService>(navigationServiceName);
 
@@ -201,12 +201,12 @@ namespace FreshMvvmExtended
 
         public async Task PopModalNavigationService(bool animate = true)
         {
-            var currentNavigationService = FreshIOC.Container.Resolve<IFreshNavigationService>(_currentPageModel.CurrentNavigationServiceName);
+            var currentNavigationService = FreshIOC.Container.Resolve<IFreshNavigationService>(_currentViewModel.CurrentNavigationServiceName);
             currentNavigationService.NotifyChildrenPageWasPopped();
 
-            FreshIOC.Container.Unregister<IFreshNavigationService>(_currentPageModel.CurrentNavigationServiceName);
+            FreshIOC.Container.Unregister<IFreshNavigationService>(_currentViewModel.CurrentNavigationServiceName);
 
-            var navServiceName = _currentPageModel.PreviousNavigationServiceName;
+            var navServiceName = _currentViewModel.PreviousNavigationServiceName;
             IFreshNavigationService rootNavigation = FreshIOC.Container.Resolve<IFreshNavigationService>(navServiceName);
             await rootNavigation.PopPage(animate);
         }
@@ -214,11 +214,11 @@ namespace FreshMvvmExtended
         /// <summary>
         /// This method switches the selected main page, TabbedPage the selected tab or if MasterDetail, works with custom pages also
         /// </summary>
-        public Task<FreshBaseViewModel> SwitchSelectedRootPageModel<T>() where T : FreshBaseViewModel
+        public Task<FreshBaseViewModel> SwitchSelectedRootViewModel<T>() where T : FreshBaseViewModel
         {
-            var currentNavigationService = FreshIOC.Container.Resolve<IFreshNavigationService>(_currentPageModel.CurrentNavigationServiceName);
+            var currentNavigationService = FreshIOC.Container.Resolve<IFreshNavigationService>(_currentViewModel.CurrentNavigationServiceName);
 
-            return currentNavigationService.SwitchSelectedRootPageModel<T>();
+            return currentNavigationService.SwitchSelectedRootViewModel<T>();
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace FreshMvvmExtended
         /// </summary>
         public Task<FreshBaseViewModel> SwitchSelectedTab<T>() where T : FreshBaseViewModel
         {
-            return SwitchSelectedRootPageModel<T>();
+            return SwitchSelectedRootViewModel<T>();
         }
 
         /// <summary>
@@ -234,12 +234,12 @@ namespace FreshMvvmExtended
         /// </summary>
         public Task<FreshBaseViewModel> SwitchSelectedMaster<T>() where T : FreshBaseViewModel
         {
-            return SwitchSelectedRootPageModel<T>();
+            return SwitchSelectedRootViewModel<T>();
         }
 
-        public async Task<string> PushPageModelWithNewNavigation<T>(object data, bool animate = true) where T : FreshBaseViewModel
+        public async Task<string> PushViewModelWithNewNavigation<T>(object data, bool animate = true) where T : FreshBaseViewModel
         {
-            var page = FreshViewModelResolver.ResolvePageModel<T>(data);
+            var page = FreshViewModelResolver.ResolveViewModel<T>(data);
             var navigationName = Guid.NewGuid().ToString();
             var naviationContainer = new FreshNavigationContainer(page, navigationName);
             await PushNewNavigationServiceModal(naviationContainer, page.GetModel(), animate);
@@ -261,19 +261,19 @@ namespace FreshMvvmExtended
         /// </summary>
         public void RemoveFromNavigation()
         {
-            this._currentPageModel.RaisePageWasPopped();
+            this._currentViewModel.RaisePageWasPopped();
             this._currentPage.Navigation.RemovePage(_currentPage);
         }
 
         /// <summary>
         /// Removes specific page/pagemodel from navigation
         /// </summary>
-        public void RemoveFromNavigation<TPageModel>(bool removeAll = false) where TPageModel : FreshBaseViewModel
+        public void RemoveFromNavigation<TViewModel>(bool removeAll = false) where TViewModel : FreshBaseViewModel
         {
-            //var pages = this._currentPage.Navigation.Where (o => o is TPageModel);
+            //var pages = this._currentPage.Navigation.Where (o => o is TViewModel);
             foreach (var page in this._currentPage.Navigation.NavigationStack.Reverse().ToList())
             {
-                if (page.BindingContext is TPageModel)
+                if (page.BindingContext is TViewModel)
                 {
                     page.GetModel()?.RaisePageWasPopped();
                     this._currentPage.Navigation.RemovePage(page);

@@ -2,22 +2,18 @@
 <package >
   <metadata>
     <id>FreshMvvmExtended</id>
-    <version>1.0.0</version>
+    <version>0.0.1-Alpha</version>
     <title>FreshMvvmExtended</title>
     <authors>Claudio Luciano</authors>
     <owners>claudioluciano</owners>
     <projectUrl>https://github.com/claudioluciano/FreshMvvmExtended</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>FreshMvvmExtended is a DotNet Standard version from FreshMvvm</description>
+    <description>FreshMvvmExtended is a DotNet Standard version from FreshMvvm with some Features.</description>
     <tags>Mvvm, Xamarin.Forms, FreshMvvm</tags>
     <releaseNotes>
-      1.0.0
-      The same FreshMvvm, but on DotNet Standard and with some plus features
-
     </releaseNotes>
   </metadata>
   <files>
-    <file src="bin/Release/Fresh*.*" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10" />
-    <file src="bin/Release/Fresh*.*" target="lib\netstandard1.0" />
+    <file src="bin/Release/netstandard2.0/*.dll" target="lib\netstandard2.0" />
   </files>
 </package>

@@ -34,7 +34,7 @@ namespace FreshMvvmExtended
 
         public virtual Page AddTab<T> (string title, string icon, object data = null) where T : FreshBaseViewModel
         {
-            var page = FreshViewModelResolver.ResolvePageModel<T> (data);
+            var page = FreshViewModelResolver.ResolveViewModel<T> (data);
             page.GetModel ().CurrentNavigationServiceName = NavigationServiceName;
             _tabs.Add (page);
             var container = CreateContainerPageSafe (page);
@@ -88,7 +88,7 @@ namespace FreshMvvmExtended
             }
         }
 
-        public Task<FreshBaseViewModel> SwitchSelectedRootPageModel<T>() where T : FreshBaseViewModel
+        public Task<FreshBaseViewModel> SwitchSelectedRootViewModel<T>() where T : FreshBaseViewModel
         {
             if (this.CurrentPage == _innerTabbedPage)
             {

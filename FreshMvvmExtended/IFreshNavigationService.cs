@@ -14,9 +14,9 @@ namespace FreshMvvmExtended
 		/// <summary>
 		/// This method switches the selected main page, TabbedPage the selected tab or if MasterDetail, works with custom pages also
 		/// </summary>
-		/// <returns>The BagePageModel, allows you to PopToRoot, Pass Data</returns>
+		/// <returns>The BageViewModel, allows you to PopToRoot, Pass Data</returns>
 		/// <param name="newSelected">The pagemodel of the root you want to change</param>
-		Task<FreshBaseViewModel> SwitchSelectedRootPageModel<T>() where T : FreshBaseViewModel;
+		Task<FreshBaseViewModel> SwitchSelectedRootViewModel<T>() where T : FreshBaseViewModel;
 
 		void NotifyChildrenPageWasPopped();
 

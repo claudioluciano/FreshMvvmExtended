@@ -37,7 +37,7 @@ namespace FreshMvvmExtended
 
         public virtual Page AddTab<T>(string title, string icon = null, bool IsNavigationPage = false, object data = null) where T : FreshBaseViewModel
         {
-            var page = FreshViewModelResolver.ResolvePageModel<T>(data);
+            var page = FreshViewModelResolver.ResolveViewModel<T>(data);
 
             page.GetModel().CurrentNavigationServiceName = NavigationServiceName;
 
@@ -103,7 +103,7 @@ namespace FreshMvvmExtended
             }
         }
 
-        public Task<FreshBaseViewModel> SwitchSelectedRootPageModel<T>() where T : FreshBaseViewModel
+        public Task<FreshBaseViewModel> SwitchSelectedRootViewModel<T>() where T : FreshBaseViewModel
         {
             var page = _tabs.FindIndex(o => o.GetModel().GetType().FullName == typeof(T).FullName);
 

@@ -12,4 +12,3 @@ namespace FreshMvvmExtended
         IRegisterOptions UsingConstructor<RegisterType>(Expression<Func<RegisterType>> constructor);
     }
 }
-

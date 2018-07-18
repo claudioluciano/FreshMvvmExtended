@@ -16,7 +16,7 @@ namespace FreshMvvmExtended
             if (BindingContext is FreshBaseViewModel pageModel && pageModel.ToolbarItems != null && pageModel.ToolbarItems.Count > 0)
             {
 
-                pageModel.ToolbarItems.CollectionChanged += PageModel_ToolbarItems_CollectionChanged;
+                pageModel.ToolbarItems.CollectionChanged += ViewModel_ToolbarItems_CollectionChanged;
 
                 foreach (var toolBarItem in pageModel.ToolbarItems)
                 {
@@ -29,7 +29,7 @@ namespace FreshMvvmExtended
 
         }
 
-        void PageModel_ToolbarItems_CollectionChanged (object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void ViewModel_ToolbarItems_CollectionChanged (object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             foreach (ToolbarItem toolBarItem in e.NewItems) {
                 if (!(this.ToolbarItems.Contains (toolBarItem))) {

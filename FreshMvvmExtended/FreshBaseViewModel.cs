@@ -26,7 +26,7 @@ namespace FreshMvvmExtended
         /// <summary>
         /// The previous page model, that's automatically filled, on push
         /// </summary>
-        public FreshBaseViewModel PreviousPageModel { get; set; }
+        public FreshBaseViewModel PreviousViewModel { get; set; }
 
         /// <summary>
         /// A reference to the current page, that's automatically filled, on push
@@ -47,9 +47,9 @@ namespace FreshMvvmExtended
         }
 
         /// <summary>
-        /// This method is called when the PageModel is loaded, the initData is the data that's sent from pagemodel before
+        /// This method is called when the ViewModel is loaded, the initData is the data that's sent from pagemodel before
         /// </summary>
-        /// <param name="initData">Data that's sent to this PageModel from the pusher</param>
+        /// <param name="initData">Data that's sent to this ViewModel from the pusher</param>
         public virtual void Init(object initData)
         {
         }
@@ -81,7 +81,7 @@ namespace FreshMvvmExtended
         public string CurrentNavigationServiceName = FreshConstants.DefaultNavigationServiceName;
 
         /// <summary>
-        /// This means the current PageModel is shown modally and can be pop'd modally
+        /// This means the current ViewModel is shown modally and can be pop'd modally
         /// </summary>
         public bool IsModalAndHasPreviousNavigationStack()
         {

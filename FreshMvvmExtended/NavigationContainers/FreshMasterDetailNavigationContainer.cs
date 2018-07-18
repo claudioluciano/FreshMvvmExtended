@@ -42,7 +42,7 @@ namespace FreshMvvmExtended
 
         public virtual void AddPage<T>(string title, object data = null) where T : FreshBaseViewModel
         {
-            var page = FreshViewModelResolver.ResolvePageModel<T>(data);
+            var page = FreshViewModelResolver.ResolveViewModel<T>(data);
             page.GetModel().CurrentNavigationServiceName = NavigationServiceName;
             _pagesInner.Add(page);
             var navigationContainer = CreateContainerPage(page);
@@ -54,7 +54,7 @@ namespace FreshMvvmExtended
         public virtual void AddPage(string modelName, string title, object data = null)
         {
             var pageModelType = Type.GetType(modelName);
-            var page = FreshViewModelResolver.ResolvePageModel(pageModelType, null);
+            var page = FreshViewModelResolver.ResolveViewModel(pageModelType, null);
             page.GetModel().CurrentNavigationServiceName = NavigationServiceName;
             _pagesInner.Add(page);
             var navigationContainer = CreateContainerPage(page);
@@ -147,7 +147,7 @@ namespace FreshMvvmExtended
                 ((IFreshNavigationService)Detail).NotifyChildrenPageWasPopped();
         }
 
-        public Task<FreshBaseViewModel> SwitchSelectedRootPageModel<T>() where T : FreshBaseViewModel
+        public Task<FreshBaseViewModel> SwitchSelectedRootViewModel<T>() where T : FreshBaseViewModel
         {
             var tabIndex = _pagesInner.FindIndex(o => o.GetModel().GetType().FullName == typeof(T).FullName);
 

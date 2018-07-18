@@ -32,7 +32,7 @@ namespace FreshMvvmExtended
             System.Collections.Generic.List<Page> pages = new System.Collections.Generic.List<Page>();
             if (page is NavigationPage)
                 pages.AddRange((page as NavigationPage).Navigation.NavigationStack);
-            else if (page is MasterDetailPage && (page as MasterDetailPage).Detail is NavigationPage)
+            else if (page is MasterDetailPage)
                 pages.AddRange((page as MasterDetailPage).Detail.Navigation.NavigationStack);
             else if (page is TabbedPage)
                 pages.AddRange((page as TabbedPage).Children);
