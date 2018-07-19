@@ -9,8 +9,11 @@ namespace FreshMvvmExtended
 {
     public class FreshTabbedNavigationContainer : Xamarin.Forms.TabbedPage, IFreshNavigationService
     {
-        List<Page> _tabs = new List<Page>();
-        public IEnumerable<Page> TabbedPages { get { return _tabs; } }
+        //List<Page> _tabs = new List<Page>();
+
+        Dictionary<Page, (Color BarBackgroundColor, Color TextColor)> _tabs = new Dictionary<Page, (Color BarBackgroundColor, Color TextColor)>();
+
+        public IEnumerable<Page> TabbedPages { get { return _tabs.Keys; } }
 
         /// <summary>
         /// 
@@ -41,7 +44,31 @@ namespace FreshMvvmExtended
 
             page.GetModel().CurrentNavigationServiceName = NavigationServiceName;
 
-            _tabs.Add(page);
+            _tabs.Add(page, (Color.White, Color.Black));
+
+            Page navigationContainer;
+
+            if (IsNavigationPage)
+                navigationContainer = CreateContainerPageSafe(page);
+            else
+                navigationContainer = page;
+
+            navigationContainer.Title = title;
+
+            if (!string.IsNullOrWhiteSpace(icon))
+                navigationContainer.Icon = icon;
+
+            Children.Add(navigationContainer);
+
+            return navigationContainer;
+        }
+        public virtual Page AddTab<T>(string title, Color barBackgroundColor, Color textColor, string icon = null, bool IsNavigationPage = false, object data = null) where T : FreshBaseViewModel
+        {
+            var page = FreshViewModelResolver.ResolveViewModel<T>(data);
+
+            page.GetModel().CurrentNavigationServiceName = NavigationServiceName;
+
+            _tabs.Add(page, (barBackgroundColor, textColor));
 
             Page navigationContainer;
 
@@ -105,7 +132,7 @@ namespace FreshMvvmExtended
 
         public Task<FreshBaseViewModel> SwitchSelectedRootViewModel<T>() where T : FreshBaseViewModel
         {
-            var page = _tabs.FindIndex(o => o.GetModel().GetType().FullName == typeof(T).FullName);
+            var page = _tabs.Keys.ToList().FindIndex(o => o.GetModel().GetType().FullName == typeof(T).FullName);
 
             if (page > -1)
             {
@@ -113,9 +140,18 @@ namespace FreshMvvmExtended
                 var topOfStack = CurrentPage.Navigation.NavigationStack.LastOrDefault();
                 if (topOfStack != null)
                     return Task.FromResult(topOfStack.GetModel());
-
             }
             return null;
+        }
+
+        protected override void OnCurrentPageChanged()
+        {
+            var color = _tabs.FirstOrDefault(x => x.Key.GetType().FullName == this.CurrentPage.GetType().FullName).Value;
+
+            this.BarBackgroundColor = color.BarBackgroundColor;
+            this.BarTextColor = color.TextColor;
+
+            base.OnCurrentPageChanged();
         }
     }
 }
