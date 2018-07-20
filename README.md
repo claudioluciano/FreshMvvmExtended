@@ -2,6 +2,8 @@
 
 FreshMvvmExtended is a DotNet Standard version from [FreshMvvm](https://github.com/rid00z/FreshMvvm)  with some Features. 
 
+[![nuget](https://img.shields.io/badge/nuget-download-blue.svg)](https://www.nuget.org/packages/FreshMvvmExtended)
+  
 ### Features
 
 * ViewModel to ViewModel Navigation
