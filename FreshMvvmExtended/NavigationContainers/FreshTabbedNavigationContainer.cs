@@ -37,6 +37,28 @@ namespace FreshMvvmExtended
         {
             FreshIOC.Container.Register<IFreshNavigationService>(this, NavigationServiceName);
         }
+        public virtual Page AddTab<T>(T page, string title, string icon = null, bool IsNavigationPage = false, object data = null) where T : Page
+        {
+            page.GetModel().CurrentNavigationServiceName = NavigationServiceName;
+
+            _tabs.Add(page, (Color.White, Color.Black));
+
+            Page navigationContainer;
+
+            if (IsNavigationPage)
+                navigationContainer = CreateContainerPageSafe(page);
+            else
+                navigationContainer = page;
+
+            navigationContainer.Title = title;
+
+            if (!string.IsNullOrWhiteSpace(icon))
+                navigationContainer.Icon = icon;
+
+            Children.Add(navigationContainer);
+
+            return navigationContainer;
+        }
 
         public virtual Page AddTab<T>(string title, string icon = null, bool IsNavigationPage = false, object data = null) where T : FreshBaseViewModel
         {
@@ -62,6 +84,7 @@ namespace FreshMvvmExtended
 
             return navigationContainer;
         }
+
         public virtual Page AddTab<T>(string title, Color barBackgroundColor, Color textColor, string icon = null, bool IsNavigationPage = false, object data = null) where T : FreshBaseViewModel
         {
             var page = FreshViewModelResolver.ResolveViewModel<T>(data);
@@ -137,7 +160,9 @@ namespace FreshMvvmExtended
             if (page > -1)
             {
                 CurrentPage = this.Children[page];
-                var topOfStack = CurrentPage.Navigation.NavigationStack.LastOrDefault();
+                Page topOfStack;
+                topOfStack = CurrentPage.Navigation.NavigationStack.Count > 0 ? CurrentPage.Navigation.NavigationStack.LastOrDefault() : CurrentPage;
+
                 if (topOfStack != null)
                     return Task.FromResult(topOfStack.GetModel());
             }
